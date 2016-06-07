@@ -5,7 +5,6 @@
 #include "timing.h"
 #include <iostream>
 
-
 class Eval_res {
     public:
         double m_correct;
@@ -24,6 +23,7 @@ Eval_res evaluate(T1 ann_function, T2 knn_function) {
     auto knnres{ Timing<std::vector<int>>::take_time(knn_function) };
     //double accu{ compare(annres.m_result, knnres.m_result) };
     double sum{0.0};
+    assert(annres.m_result.size() == knnres.m_result.size());
     for (int i = 0; i < annres.m_result.size(); i++) {
         for (int j = 0; j < knnres.m_result.size(); j++) {
             if (annres.m_result[i] == knnres.m_result[j]) {

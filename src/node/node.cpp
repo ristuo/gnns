@@ -33,7 +33,7 @@ Node *Node::neighbor_query(std::vector<double> &querypoint, int e_param) {
     return min_node;
 }
 
-Node *Node::neighbor_query2(int k, Heap<double> &pq, std::vector<double> &querypoint, int e_param) {
+Node *Node::neighbor_query2(int k, Heap<double> &pq, std::vector<double> &querypoint, std::vector<int> &taboo_list, int e_param) {
     Node * min_node{nullptr};
     int neighbors_explored{0};
     double min_dist{std::numeric_limits<double>::infinity()};
@@ -45,7 +45,7 @@ Node *Node::neighbor_query2(int k, Heap<double> &pq, std::vector<double> &queryp
             pq.insert(Heapnode<double>(neighbor->get_m_id(), distance));
             pq.extractmax();
         }
-        if (distance < min_dist) {
+        if (distance < min_dist && !contains(taboo_list, neighbor->get_m_id())) {
             min_node = neighbor;
             min_dist = distance;
         }
@@ -54,6 +54,7 @@ Node *Node::neighbor_query2(int k, Heap<double> &pq, std::vector<double> &queryp
         }
         neighbors_explored++;
     }
+    taboo_list.push_back(min_node->get_m_id());
     return min_node;
 }
 

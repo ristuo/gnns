@@ -58,4 +58,13 @@ void print_vector(std::vector<T> &v) {
     }
     std::cout << std::endl;
 }
+
+template <typename T>
+bool contains(std::vector<T> &v, T x) {
+    for (T elem : v) {
+        if (elem == x) 
+            return true;
+    }
+    return false;
+}
 #endif

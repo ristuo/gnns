@@ -16,8 +16,7 @@ class Node {
         std::vector<Node *> get_m_edges_to() { return m_edges_to;};
         int get_m_id() { return m_id;};
         Node* neighbor_query(std::vector<double> &querypoint, int e_param = 1000);
-        Node* neighbor_query2(int k, Heap<double> &pq, std::vector<double> &querypoint, int e_param = 1000);
+        Node* neighbor_query2(int k, Heap<double> &pq, std::vector<double> &querypoint, std::vector<int> &taboo_list, int e_param = 1000);
     friend std::ostream& operator<<(std::ostream& os, Node& node);
 };
 #endif
-

@@ -13,7 +13,6 @@ Node* Graph::query(std::vector<double> &querypoint) {
     std::random_device rd;
     std::mt19937 mt( rd() );
     Node *node = &m_nodes[ mt() % m_nodes.size() ];
-
     for (int i = 0; i < 5; i++) {
         Node *new_node = node->neighbor_query(querypoint);
         if (!new_node) {
@@ -24,14 +23,14 @@ Node* Graph::query(std::vector<double> &querypoint) {
     return node;
 }
 
-Heap<double> Graph::query2(int k, std::vector<double> &querypoint, int e_param, int step) {
-    std::random_device rd;
-    std::mt19937 mt( rd() );
-    Node *node = &m_nodes[ mt() % m_nodes.size() ];
+Heap<double> Graph::query2(int k, std::vector<double> &querypoint, std::mt19937 &mt, int e_param, int step) {
 
+    Node *node = &m_nodes[ mt() % m_nodes.size() ];
+    std::vector<int> taboo_list{};
+    taboo_list.reserve(step);
     Heap<double> pq{k};
     for (int i = 0; i < step; i++) {
-        Node *new_node = node->neighbor_query2(k, pq, querypoint, e_param);
+        Node *new_node = node->neighbor_query2(k, pq, querypoint, taboo_list, e_param);
         if (!new_node) {
             break;
         }
@@ -40,8 +39,9 @@ Heap<double> Graph::query2(int k, std::vector<double> &querypoint, int e_param, 
     return pq;
 }
 
+//super deprecated
 Graph::Graph(Matrix adjacency) {
-    int nmb_nodes = adjacency.get_m_cols();
+    long unsigned int nmb_nodes = adjacency.get_m_cols();
     m_nodes = std::vector<Node>{nmb_nodes};
     for (int i = 0; i < nmb_nodes; i++) {
         for (int j = 0; j < nmb_nodes; j++) {
@@ -52,20 +52,18 @@ Graph::Graph(Matrix adjacency) {
     }
 }
 
-
-
-
 Graph::Graph(int k, std::vector<std::vector<double>> &data, bool verbose) {
     time_t start{time(0)};
-    int nmb_nodes{data.size()};
+    long unsigned int nmb_nodes{data.size()};
     m_nodes = std::vector<Node>{nmb_nodes};
     for (int i = 0; i < nmb_nodes; i++) {
-        auto neighbors{ linear_search(k, data[i], data) };
+        auto neighbors{ linear_search(k+1, data[i], data) };
         for (int neighbor_index : neighbors) {
-            m_nodes[i].add_neighbor(&m_nodes[neighbor_index]);
+            if (neighbor_index != m_nodes[i].get_m_id()) 
+                m_nodes[i].add_neighbor(&m_nodes[neighbor_index]);
         }
         if (i % 100 == 0) {
-            time_t aika{difftime(time(0),start)};
+            auto aika{difftime(time(0),start)};
             if (verbose) 
                 std::cout << "\tNode number " << i << " constructed at " << aika << std::endl;
         }
