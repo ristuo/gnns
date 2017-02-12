@@ -8,6 +8,7 @@ data is assumed to reside in data folder in project root as row oriented csv mat
 ```
 cd to project root
 mkdir build
+cd build
 cmake ..
 make
 ./graph
